@@ -170,17 +170,13 @@ RUN mkdir /root/.ssh/ && ssh-keyscan github.com | tee -a /root/.ssh/known_hosts
 RUN echo "session required pam_limits.so" | tee --append /etc/pam.d/common-session > /dev/null
 
 
-
+#install rospackage from github
 WORKDIR /home/${USER}/ros_ws/src
 
-
 RUN git clone https://github.com/RLoad/iiwa_toolkit.git
-
 RUN git clone https://github.com/RLoad/net-ft-ros.git
 RUN git clone https://github.com/nbfigueroa/lpvDS-lib.git
-
 RUN git clone https://github.com/epfl-lasa/gaussian-process-regression.git
-
 RUN git clone https://github.com/epfl-lasa/mathlib.git
 RUN git clone https://github.com/epfl-lasa/fast-gmm.git
 
@@ -192,9 +188,10 @@ RUN sudo chown -R ${USER}:${HOST_GID} .bashrc
 RUN if [ "${USE_SIMD}" = "ON" ] ; \
     then echo "export ENABLE_SIMD=ON" >> /home/${USER}/.bashrc ; fi
 
-
+SHELL ["/bin/bash", "-c"]
 ### Build ros workspace
 WORKDIR /home/${USER}/ros_ws
+RUN rosdep update
 RUN source /home/${USER}/.bashrc && rosdep install --from-paths src --ignore-src -r -y
 RUN source /home/${USER}/.bashrc && catkin_make;
 
