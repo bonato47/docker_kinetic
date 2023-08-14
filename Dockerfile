@@ -190,7 +190,10 @@ RUN if [ "${USE_SIMD}" = "ON" ] ; \
 
 SHELL ["/bin/bash", "-c"]
 ### Build ros workspace
+USER ${USER}
 WORKDIR /home/${USER}/ros_ws
+RUN sudo apt update
+RUN sudo apt install -y libeigen3-dev
 RUN rosdep update
 RUN source /home/${USER}/.bashrc && rosdep install --from-paths src --ignore-src -r -y
 RUN source /home/${USER}/.bashrc && catkin_make;
